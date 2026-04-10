@@ -1,3 +1,4 @@
+//Scan -> reads data from database and stores in variables
 package main
 
 import(
