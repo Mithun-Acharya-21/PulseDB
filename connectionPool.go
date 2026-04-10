@@ -83,4 +83,11 @@ for rows.Next(){
 	rows.Scan(&id,&name,&url) //scan each row into variables
 	fmt.Println("monitor:", id, name, url)
 }
+
+//PATTERN 4 UPDATE
+result, err := pool.Exec(ctx,
+    `UPDATE monitors SET name=$1, updated_at=NOW() WHERE id=$2`, //finds a row in monitors  table with matching id and updates name and updated_at
+    "Google Updated", id,
+)
+fmt.Println("rows updated:", result.RowsAffected())
 }
