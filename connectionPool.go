@@ -4,6 +4,9 @@ import(
 	"context"
 	"fmt"
 	"os"
+	"time"
+	"errors"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -11,8 +14,7 @@ import(
 func main(){
 	ctx := context.Background()
 	//these helps to read from environment in real apps
-	connStr := "postgres://postgres:password@localhost:5432/postgres"
-
+	connStr := "postgres://postgres:secret@localhost:5433/pulsedb"
 	//pgxpool.New creates the pool - does Not open connection yet
 	pool, err := pgxpool.New(ctx, connStr)
 	if err != nil{
@@ -38,4 +40,42 @@ func main(){
 		os.Exit(1)
 	}
 	fmt.Println("PostgreSQL version:", version)
+// Pattern 1 — INSERT
+var id, status string
+var createdAt, updatedAt time.Time
+
+err = pool.QueryRow(ctx,
+    `INSERT INTO monitors (name, url, interval_s)
+     VALUES ($1, $2, $3)
+     RETURNING id, status, created_at, updated_at`,
+    "Google", "https://google.com", 30,
+).Scan(&id, &status, &createdAt, &updatedAt)
+
+if err != nil {
+    fmt.Println("Insert failed:", err)
+    os.Exit(1)
+}
+fmt.Println("Inserted:", id)
+
+//pattern-2 SELECT
+var name, url string
+var intervalS int
+
+err = pool.QueryRow(ctx,
+    `SELECT name, url, interval_s FROM monitors WHERE id = $1`,
+    id,
+).Scan(&name, &url, &intervalS)
+
+if errors.Is(err, pgx.ErrNoRows) {
+    fmt.Println("not found")
+}else{
+	fmt.Println("fetched monitor:", name, url, intervalS)
+}
+
+//pattern -3 SELECT multiple row
+rows, err := pool.Query(ctx, `SELECT name, url, interval_s FROM monitors`) //it sends sql 
+if err != nil{
+	panic(err)
+}
+defer rows.Close()
 }
