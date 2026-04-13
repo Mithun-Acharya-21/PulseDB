@@ -10,4 +10,6 @@ CREATE TABLE IF NOT EXISTS monitors (
 
 CREATE INDEX IF NOT EXISTS idx_monitors_active
     ON monitors(status) WHERE status = 'active';
-    
+
+ALTER TABLE monitors
+    ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ;
