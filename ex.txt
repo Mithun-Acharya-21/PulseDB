@@ -1,0 +1,9 @@
+PulseDB is a production-grade HTTP uptime monitoring service — the same category of product as Pingdom, UptimeRobot, and Datadog Synthetics.
+
+What it does
+You register a URL (e.g. https://myapi.com/health) with a name and a check interval (e.g. every 30 seconds).
+A background worker pool automatically probes that URL every N seconds via HTTP GET.
+Every probe result (status code, response time, any error) is stored as a Check record.
+You can fetch check history via REST API.
+Prometheus scrapes live metrics (request counts, latencies, active monitors, queue depth).
+Grafana visualises those metrics.
