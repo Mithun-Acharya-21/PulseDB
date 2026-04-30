@@ -7,3 +7,15 @@ Every probe result (status code, response time, any error) is stored as a Check 
 You can fetch check history via REST API.
 Prometheus scrapes live metrics (request counts, latencies, active monitors, queue depth).
 Grafana visualises those metrics.
+
+
+
+monitor/monitor.go	Domain model — the structs that represent your data
+monitor/repository.go	The contract (interface) — what operations any storage must support
+monitor/memory_repo.go	In-memory implementation of that contract (for dev/testing)
+monitor/postgres_repo.go	PostgreSQL implementation of that contract (production)
+monitor/handler.go	HTTP handler — translates HTTP requests into repository calls
+checker/checker.go	Background goroutine worker pool that probes URLs
+db/db.go	PostgreSQL connection pool setup
+metrics/metrics.go	Prometheus metric definitions
+cmd/api/main.go	Entry point — wires everything together, starts server, handles shutdown
