@@ -106,3 +106,10 @@ You can point Prometheus to the app instance and visualize the data in Grafana.
 ## License
 
 This project is intended for educational and experimental use.
+
+### feat: create PostgreSQL persistence layer
+> Commit #3 | 2026-07-24 22:33:57
+
+#### Changes
+- Refactored module structure
+- Updated API documentation
