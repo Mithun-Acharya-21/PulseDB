@@ -113,3 +113,10 @@ This project is intended for educational and experimental use.
 #### Changes
 - Refactored module structure
 - Updated API documentation
+
+### feat: implement HTTP endpoint monitoring
+> Commit #10 | 2026-07-24 22:34:01
+
+#### Changes
+- Refactored module structure
+- Updated API documentation
