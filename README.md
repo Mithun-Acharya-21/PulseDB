@@ -120,3 +120,9 @@ This project is intended for educational and experimental use.
 #### Changes
 - Refactored module structure
 - Updated API documentation
+
+## feat: implement notification dispatch system
+*Commit #15 - 2026-07-24 22:34:04*
+
+- Updated documentation for PulseDB
+- Added usage examples
