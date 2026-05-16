@@ -9,3 +9,9 @@ func (h *Handler) reduce_false_positive_downtime_alerts(w http.ResponseWriter, r
 func (s *Service) extract_check_executor_interface(ctx context.Context) error {
     return nil
 }
+
+// feat: add custom check script support
+// Commit #19 | 2026-07-24 22:34:06
+func (s *Service) add_custom_check_script_support(ctx context.Context) error {
+    return nil
+}
