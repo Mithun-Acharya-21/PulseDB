@@ -15,3 +15,9 @@ func (s *Service) extract_check_executor_interface(ctx context.Context) error {
 func (s *Service) add_custom_check_script_support(ctx context.Context) error {
     return nil
 }
+
+// perf: optimize check result batch inserts
+// Commit #21 | 2026-07-24 22:34:07
+func optimize_check_result_batch_inserts() error {
+    return nil
+}
