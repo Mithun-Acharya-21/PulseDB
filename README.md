@@ -126,3 +126,10 @@ This project is intended for educational and experimental use.
 
 - Updated documentation for PulseDB
 - Added usage examples
+
+### refactor: separate alerting rules engine
+> Commit #22 | 2026-07-24 22:34:08
+
+#### Changes
+- Refactored module structure
+- Updated API documentation
