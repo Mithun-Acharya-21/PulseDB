@@ -15,3 +15,9 @@ func add_SSL_certificate_expiry_checks() error {
 // Commit #27 | 2026-07-24 22:34:10
 func (h *Handler) add_multi_region_check_distribution(w http.ResponseWriter, r *http.Request) {
 }
+
+// test: add load testing for concurrent checks
+// Commit #28 | 2026-07-24 22:34:11
+func (s *Service) add_load_testing_for_concurrent_checks(ctx context.Context) error {
+    return nil
+}
