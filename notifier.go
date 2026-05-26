@@ -21,3 +21,9 @@ func (h *Handler) add_multi_region_check_distribution(w http.ResponseWriter, r *
 func (s *Service) add_load_testing_for_concurrent_checks(ctx context.Context) error {
     return nil
 }
+
+// feat: add maintenance window scheduling
+// Commit #31 | 2026-07-24 22:34:13
+type addmaintenancewindowscheduling struct {
+    ID string `json:"id"`
+}
