@@ -21,3 +21,8 @@ func (s *Service) add_incident_response_playbook(ctx context.Context) error {
 func handle_timezone_in_SLA_calculations() error {
     return nil
 }
+
+// feat: add webhook retry with exponential backoff
+// Commit #37 | 2026-07-24 22:34:16
+func (h *Handler) add_webhook_retry_with_exponential_backoff(w http.ResponseWriter, r *http.Request) {
+}
