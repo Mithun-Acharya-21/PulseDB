@@ -33,3 +33,9 @@ type addmaintenancewindowscheduling struct {
 type addendtoendmonitoringpipelinetests struct {
     ID string `json:"id"`
 }
+
+// refactor: standardize error response format
+// Commit #38 | 2026-07-24 22:34:16
+type standardizeerrorresponseformat struct {
+    ID string `json:"id"`
+}
