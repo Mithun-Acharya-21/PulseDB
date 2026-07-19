@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"myproject/internal/metrics"
 	"myproject/internal/monitor"
 )
 
@@ -60,6 +61,9 @@ func (c *Checker) dispatch(ctx context.Context, jobs chan<- *monitor.Monitor) {
 		slog.Error("checker: list due monitors", "err", err)
 		return
 	}
+	//Number of mnoitor currently scheduled
+	metrics.ActiveMonitors.Set(float64(len(monitors)))
+	metrics.WorkerQueueDepth.Set(float64(len(monitors)))
 	for _, m := range monitors {
 		select {
 		case jobs <- m:
@@ -91,7 +95,16 @@ func (c *Checker) runCheck(ctx context.Context, m *monitor.Monitor) {
 
 	start := time.Now()
 	statusCode, errStr := doProbe(probeCtx, m.URL)
-	ms := time.Since(start).Milliseconds()
+	elapsed := time.Since(start)
+	ms := elapsed.Milliseconds()
+
+	// Record Prometheus business metrics
+	metrics.CheckDuration.WithLabelValues(m.Name).Observe(elapsed.Seconds())
+	if errStr != "" {
+		metrics.ChecksTotal.WithLabelValues("error").Inc()
+	} else {
+		metrics.ChecksTotal.WithLabelValues("success").Inc()
+	}
 
 	slog.Info("checker: probed",
 		"monitor", m.Name, "status", statusCode, "ms", ms)
@@ -131,4 +144,3 @@ func doProbe(ctx context.Context, url string) (int, string) {
 	defer resp.Body.Close()
 	return resp.StatusCode, ""
 }
-

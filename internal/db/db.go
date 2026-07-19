@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// New creates a connection pool and verifies it with Ping
+// CREATING A CONNECTION POOL AND VERYFYING IT IS WORKING
 func New(ctx context.Context, connStr string) (*pgxpool.Pool, error) {
 	config, err := pgxpool.ParseConfig(connStr)
 	if err != nil {

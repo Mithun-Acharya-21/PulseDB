@@ -26,7 +26,8 @@ var(
 
 //Business metrics
 
-	ActiveMonitors = promauto.NewGauge( //to measure the Capacity/load
+//to measure the Capacity/load
+	ActiveMonitors = promauto.NewGauge( 
 		prometheus.GaugeOpts{
 			Name: "pulsedb_active_monitors",
 			Help:"Number of active monitors",

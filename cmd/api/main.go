@@ -14,6 +14,7 @@ import (
 
 	"myproject/internal/checker"
 	"myproject/internal/db"
+	"myproject/internal/metrics"
 	"myproject/internal/monitor"
 )
 
@@ -48,14 +49,15 @@ func main() {
 	// Build the HTTP handler and register all REST routes
 	h := monitor.NewHandler(repo)
 	router := gin.Default()
+	router.Use(metrics.GinPrometheus()) // Instrument all HTTP requests
 
 	api := router.Group("/api/v1")
 	{
-		api.POST("/monitors", h.Create)              // Create a new monitor
-		api.GET("/monitors", h.List)                 // List all monitors
-		api.GET("/monitors/:id", h.GetByID)          // Get one monitor by ID
-		api.PUT("/monitors/:id", h.Update)           // Update a monitor
-		api.DELETE("/monitors/:id", h.Delete)        // Delete a monitor
+		api.POST("/monitors", h.Create)               // Create a new monitor
+		api.GET("/monitors", h.List)                  // List all monitors
+		api.GET("/monitors/:id", h.GetByID)           // Get one monitor by ID
+		api.PUT("/monitors/:id", h.Update)            // Update a monitor
+		api.DELETE("/monitors/:id", h.Delete)         // Delete a monitor
 		api.GET("/monitors/:id/checks", h.ListChecks) // Get check history
 	}
 
@@ -86,11 +88,8 @@ func main() {
 		}
 	}()
 
-	// Block until OS signal received (Ctrl+C or SIGTERM from Docker)
 	<-ctx.Done()
 	slog.Info("main: shutdown signal received")
-
-	// Give in-flight HTTP requests up to 10 s to finish
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()
 
