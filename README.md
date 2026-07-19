@@ -2,26 +2,24 @@
 
 PulseDB is a lightweight uptime monitoring service built with Go. It lets you register HTTP endpoints, run periodic health checks, store check history, and expose operational metrics for Prometheus and Grafana.
 
-The project is designed to be simple to run locally while still being suitable for production-style monitoring workflows.
-
 ## Why PulseDB?
 
 - Monitor websites and APIs for availability and response time
-- Track historical check results for each endpoint
-- Run locally with in-memory storage or connect to PostgreSQL
+- Track the history of checks for each endpoint
+- Run locally with an in-memory store or connect to PostgreSQL
 - Expose Prometheus metrics for dashboards and alerts
 - Start quickly with Docker Compose for observability tooling
 
 ## Features
 
 - CRUD REST API for monitors
-- Background worker pool that performs periodic HTTP probes
+- Background worker pool for periodic HTTP probes
 - PostgreSQL-backed storage with an in-memory fallback for development
-- Prometheus metrics for HTTP traffic and probe activity
+- Prometheus metrics for traffic and probe activity
 - Docker Compose setup for PostgreSQL, Prometheus, and Grafana
 - Graceful shutdown support with context cancellation
 
-## Tech Stack
+## Tech stack
 
 - Go 1.25+
 - Gin web framework
@@ -30,27 +28,12 @@ The project is designed to be simple to run locally while still being suitable f
 - Grafana
 - Docker and Docker Compose
 
-## Project Structure
+## Project structure
 
 ```text
 pulseDb/
 ├── cmd/api/
-│   └── main.go
 ├── internal/
-│   ├── checker/
-│   │   └── checker.go
-│   ├── db/
-│   │   ├── db.go
-│   │   └── schema.sql
-│   ├── metrics/
-│   │   ├── metrics.go
-│   │   └── middleware.go
-│   └── monitor/
-│       ├── monitor.go
-│       ├── repository.go
-│       ├── memory_repo.go
-│       ├── postgres_repo.go
-│       └── handler.go
 ├── docker-compose.yml
 ├── prometheus.yml
 ├── Dockerfile
@@ -58,12 +41,12 @@ pulseDb/
 └── go.sum
 ```
 
-## Getting Started
+## Getting started
 
 ### Prerequisites
 
 - Go 1.25 or newer
-- Docker and Docker Compose (optional, for full observability stack)
+- Docker and Docker Compose (optional, for the full observability stack)
 
 ### Run locally
 
@@ -84,12 +67,11 @@ go run ./cmd/api
 ```
 
 This starts:
-
 - PostgreSQL on port 5432
 - Prometheus on port 9090
 - Grafana on port 3000
 
-## API Endpoints
+## API overview
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -108,12 +90,6 @@ This starts:
 curl -X POST http://localhost:8080/api/v1/monitors \
   -H "Content-Type: application/json" \
   -d '{"name":"Google","url":"https://www.google.com","interval_s":30}'
-```
-
-### Example: list monitors
-
-```bash
-curl http://localhost:8080/api/v1/monitors
 ```
 
 ## Observability
