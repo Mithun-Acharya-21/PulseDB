@@ -6,16 +6,15 @@ import (
 )
 
 var(
-	//this is for HTTP layer(RED method)
-	HTTPRequestTotal = promauto.NewCounterVec(  //measure throughout and success rate .
-		prometheus.CounterOpts{
+	HTTPRequestTotal = promauto.NewCounterVec( 
+			prometheus.CounterOpts{
 			Name : "pulsedb_http_requests_total",
 			Help : "Total HTTP requests by methos,path and status code",
 		},[]string{"method","path","status_code"},
 	)
 
 
-	HttpRequestDuration= promauto.NewHistogramVec( //to measure latency (how long the user stays "waiting for an Api response")
+	HttpRequestDuration= promauto.NewHistogramVec( 
 		prometheus.HistogramOpts{
 			Name : "pulsedb_http_request_duration_duration",
 			Help : "HTTP request duration in seconds",
@@ -39,7 +38,7 @@ var(
             Name: "pulsedb_checks_total",
             Help: "Total health checks executed",
         },
-        []string{"result"}, // "success", "error", "timeout"
+        []string{"result"}, 
     )
 	CheckDuration = promauto.NewHistogramVec(
         prometheus.HistogramOpts{
