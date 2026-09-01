@@ -5,53 +5,49 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var(
-	HTTPRequestTotal = promauto.NewCounterVec( 
-			prometheus.CounterOpts{
-			Name : "pulsedb_http_requests_total",
-			Help : "Total HTTP requests by methos,path and status code",
-		},[]string{"method","path","status_code"},
+var (
+	HTTPRequestTotal = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "pulsedb_http_requests_total",
+			Help: "Total HTTP requests by methos,path and status code",
+		}, []string{"method", "path", "status_code"},
 	)
 
-
-	HttpRequestDuration= promauto.NewHistogramVec( 
+	HttpRequestDuration = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name : "pulsedb_http_request_duration_duration",
-			Help : "HTTP request duration in seconds",
+			Name:    "pulsedb_http_request_duration_duration",
+			Help:    "HTTP request duration in seconds",
 			Buckets: prometheus.DefBuckets,
 		},
-		[]string{"method","path"},
+		[]string{"method", "path"},
 	)
 
-//Business metrics
-
-//to measure the Capacity/load
-	ActiveMonitors = promauto.NewGauge( 
+	ActiveMonitors = promauto.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "pulsedb_active_monitors",
-			Help:"Number of active monitors",
+			Help: "Number of active monitors",
 		},
 	)
 
 	ChecksTotal = promauto.NewCounterVec(
-        prometheus.CounterOpts{
-            Name: "pulsedb_checks_total",
-            Help: "Total health checks executed",
-        },
-        []string{"result"}, 
-    )
+		prometheus.CounterOpts{
+			Name: "pulsedb_checks_total",
+			Help: "Total health checks executed",
+		},
+		[]string{"result"},
+	)
 	CheckDuration = promauto.NewHistogramVec(
-        prometheus.HistogramOpts{
-            Name:    "pulsedb_check_duration_seconds",
-            Help:    "Health check probe duration in seconds",
-            Buckets: []float64{.05, .1, .25, .5, 1, 2.5, 5, 10},
-        },
-        []string{"monitor_name"},
-    )
-	  WorkerQueueDepth = promauto.NewGauge(
-        prometheus.GaugeOpts{
-            Name: "pulsedb_worker_queue_depth",
-            Help: "Number of monitors waiting in the worker queue",
-        },
-    )
+		prometheus.HistogramOpts{
+			Name:    "pulsedb_check_duration_seconds",
+			Help:    "Health check probe duration in seconds",
+			Buckets: []float64{.05, .1, .25, .5, 1, 2.5, 5, 10},
+		},
+		[]string{"monitor_name"},
+	)
+	WorkerQueueDepth = promauto.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "pulsedb_worker_queue_depth",
+			Help: "Number of monitors waiting in the worker queue",
+		},
+	)
 )

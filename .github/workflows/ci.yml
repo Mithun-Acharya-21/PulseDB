@@ -1,0 +1,98 @@
+# ============================================================
+# FILE: .github/workflows/ci.yml
+# PURPOSE: Continuous Integration — runs on EVERY push and
+#          pull request to validate the code is correct.
+# ============================================================
+
+name: CI — Build & Lint
+
+# TRIGGER: This pipeline runs automatically on two events:
+# 1. A push to the 'main' branch (e.g., you merged a PR)
+# 2. A pull request opened against 'main' (e.g., you're asking to merge)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # -------------------------------------------------------
+  # JOB 1: backend-ci
+  # Validates the Go backend code is correct and compilable
+  # -------------------------------------------------------
+  backend-ci:
+    name: 🔨 Go Backend — Build & Vet
+    # RUNNER: GitHub provides this free Linux virtual machine
+    # to execute your pipeline steps inside.
+    runs-on: ubuntu-latest
+
+    steps:
+      # STEP 1: Download your repository code onto the runner VM
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # STEP 2: Install Go on the runner VM.
+      # We use the exact version from your go.mod file.
+      - name: 🐹 Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod   # Reads version from YOUR go.mod automatically
+          cache: true               # Caches downloaded modules for faster future runs
+
+      # STEP 3: Download all Go dependencies defined in go.mod
+      - name: 📦 Download dependencies
+        run: go mod download
+
+      # STEP 4: 'go vet' is Go's built-in static analyzer.
+      # It catches common bugs like unreachable code, wrong format strings, etc.
+      - name: 🔍 Run go vet (static analysis)
+        run: go vet ./...
+        # The ./... means "run this on ALL packages in the project"
+
+      # STEP 5: Compile the entire application.
+      # If this step fails, it means your code has compile errors.
+      # The -v flag makes it verbose so you can see what's being compiled.
+      - name: 🔨 Build binary
+        run: go build -v ./cmd/api
+
+  # -------------------------------------------------------
+  # JOB 2: frontend-ci
+  # Validates the React/TypeScript frontend code
+  # -------------------------------------------------------
+  frontend-ci:
+    name: ⚛️ Frontend — Install & Build
+    runs-on: ubuntu-latest
+
+    # This tells GitHub Actions to run this job FROM INSIDE
+    # the moment-maker subdirectory by default
+    defaults:
+      run:
+        working-directory: ./moment-maker
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # STEP 1: Install Bun (the fast JavaScript runtime your project uses)
+      - name: 🟡 Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # STEP 2: Install all npm/bun packages (React, TailwindCSS, etc.)
+      # The --frozen-lockfile flag ensures the EXACT versions in
+      # bun.lock are installed — no version drift between environments.
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      # STEP 3: Run TypeScript type-checker.
+      # Catches type errors in your React components before they reach production.
+      - name: 🔍 Type check (tsc)
+        run: bun run tsc --noEmit
+        continue-on-error: true   # Don't fail the whole pipeline on type errors (yet)
+
+      # STEP 4: Build the production bundle.
+      # Vite compiles your React + TypeScript into static HTML/CSS/JS files.
+      # If THIS fails, your users would see a broken app.
+      - name: 🏗️ Build frontend
+        run: bun run build

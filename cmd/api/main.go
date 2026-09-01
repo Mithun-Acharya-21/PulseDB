@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -30,6 +31,12 @@ func main() {
 		connStr = "postgres://postgres:secret@localhost:5432/postgres"
 	}
 
+	kafkaBroker := os.Getenv("KAFKA_BROKER")
+	if kafkaBroker == "" {
+		kafkaBroker = "localhost:9092"
+	}
+	slog.Info("main: kafka broker", "addr", kafkaBroker)
+
 	var repo monitor.Repository
 	pool, err := db.New(ctx, connStr)
 	if err != nil {
@@ -43,15 +50,22 @@ func main() {
 
 	h := monitor.NewHandler(repo)
 	router := gin.Default()
-	router.Use(metrics.GinPrometheus()) 
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	router.Use(cors.New(corsConfig))
+
+	router.Use(metrics.GinPrometheus())
 	api := router.Group("/api/v1")
 	{
-		api.POST("/monitors", h.Create)               
-		api.GET("/monitors", h.List)                  
-		api.GET("/monitors/:id", h.GetByID)           
-		api.PUT("/monitors/:id", h.Update)            
-		api.DELETE("/monitors/:id", h.Delete)         
-		api.GET("/monitors/:id/checks", h.ListChecks) 
+		api.POST("/monitors", h.Create)
+		api.GET("/monitors", h.List)
+		api.GET("/monitors/:id", h.GetByID)
+		api.PUT("/monitors/:id", h.Update)
+		api.DELETE("/monitors/:id", h.Delete)
+		api.GET("/monitors/:id/checks", h.ListChecks)
 	}
 
 	router.GET("/health", func(c *gin.Context) {
@@ -60,10 +74,9 @@ func main() {
 
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
-	chk := checker.New(repo)
+	chk := checker.New(repo, kafkaBroker)
 	go chk.Start(ctx)
 
-	// Build the HTTP server
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: router,

@@ -1,35 +1,27 @@
-# Binaries
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# Go build output
 /bin/
 /build/
 
-# Test binary
 *.test
 
-# Go coverage
 *.out
 coverage.html
 
-# IDE / Editor
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
 
-# OS files
 .DS_Store
 Thumbs.db
 
-# Environment
 .env
 .env.local
 
-# Vendor (uncomment if you vendor)
-# vendor/
+
